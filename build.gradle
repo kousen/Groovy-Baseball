@@ -1,0 +1,36 @@
+apply plugin:'groovy'
+apply plugin:'war'
+apply plugin:'eclipse-wtp'
+
+import org.codehaus.groovy.control.CompilerConfiguration
+
+repositories {
+    mavenCentral()
+}
+
+task generateTestDb {
+    srcFile = file("src/main/groovy/service/populate_stadium_data.groovy")
+    destFile = file("$buildDir/baseball.h2.db")
+    inputs.file srcFile
+    outputs.file destFile
+    doLast {
+        println 'building stadium db'
+        def config = new CompilerConfiguration(
+            classpath:sourceSets.main.runtimeClasspath.asPath)
+        new GroovyShell(new Binding(),config).evaluate(srcFile)
+    }
+}
+
+task printInfo(dependsOn:compileGroovy) << {
+    sourceSets.main.runtimeClasspath.each { println it }
+    def config = new CompilerConfiguration(classpath:sourceSets.main.runtimeClasspath.asPath)
+    new GroovyShell(new Binding(),config).evaluate('new service.Geocoder()')
+}
+
+dependencies {
+    groovy 'org.codehaus.groovy:groovy-all:1.8.1'
+
+    testCompile 'junit:junit:4.8.2'
+    testCompile 'org.spockframework:spock-core:0.5-groovy-1.8'
+    runtime 'com.h2database:h2:1.2.140'
+}
