@@ -1,31 +1,31 @@
 apply plugin:'groovy'
 apply plugin:'war'
-apply plugin:'eclipse-wtp'
-
-import org.codehaus.groovy.control.CompilerConfiguration
+apply plugin:'eclipse'
 
 repositories {
     mavenCentral()
 }
 
-task generateTestDb {
-    srcFile = file("src/main/groovy/service/populate_stadium_data.groovy")
-    destFile = file("$buildDir/baseball.h2.db")
-    inputs.file srcFile
-    outputs.file destFile
-    doLast {
-        println 'building stadium db'
-        def config = new CompilerConfiguration(
-            classpath:sourceSets.main.runtimeClasspath.asPath)
-        new GroovyShell(new Binding(),config).evaluate(srcFile)
-    }
+db = file("$buildDir/baseball.h2.db")
+
+task generateTestDb(dependsOn:classes, type:JavaExec) {
+    onlyIf { !db.exists() }
+    main = 'service.populate_stadium_data'
+    classpath sourceSets.main.runtimeClasspath
 }
 
-task printInfo(dependsOn:compileGroovy) << {
-    sourceSets.main.runtimeClasspath.each { println it }
-    def config = new CompilerConfiguration(classpath:sourceSets.main.runtimeClasspath.asPath)
-    new GroovyShell(new Binding(),config).evaluate('new service.Geocoder()')
+task deployDb(dependsOn:generateTestDb, type:Copy) {
+    from db
+    into 'src/main/webapp/build'
 }
+
+war.dependsOn deployDb
+
+task removeDb(type:Delete) {
+    delete 'build/baseball.h2.db','src/main/webapp/build/baseball.h2.db'
+}
+
+clean.dependsOn removeDb
 
 dependencies {
     groovy 'org.codehaus.groovy:groovy-all:1.8.1'

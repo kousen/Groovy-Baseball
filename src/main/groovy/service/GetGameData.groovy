@@ -1,5 +1,7 @@
 package service;
 
+import java.util.logging.Logger;
+
 import beans.GameResult;
 import beans.Stadium;
 
@@ -9,6 +11,8 @@ class GetGameData {
     def year
     def base = 'http://gd2.mlb.com/components/game/mlb/'
     def stadiumMap = [:]
+    
+    private static Logger logger = Logger.getLogger(GetGameData.class.name)
 
     def abbrevs = [
         ana:"Los Angeles (A)",ari:"Arizona",atl:"Atlanta",
@@ -24,9 +28,10 @@ class GetGameData {
 
     def fillInStadiumMap() {
         def db = groovy.sql.Sql.newInstance(
-            'jdbc:h2:build/baseball',
+            'jdbc:h2:~/build/baseball',
             'org.h2.Driver'
         )
+        logger.info "Value of db after newInstance is $db"
         db.eachRow("select * from stadium") { row ->
             def home = row.team
             stadiumMap[home] =
@@ -36,6 +41,7 @@ class GetGameData {
                 longitude:row.longitude
             )
         }
+        db.close()
     }
 
     def getGame(away, home, num) {
