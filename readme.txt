@@ -6,13 +6,20 @@ parsed using Groovy, then loaded into a Google Map.
 
 Mostly used as a demo project for my book,
 Making Java Groovy, http://manning.com/kousen .
+An earlier version is running online at
+http://www.kousenit.com/groovybaseball ,
+assuming my laptop in my office is still up. :)
 
-A gradle build file is provided. The build works if
-(1) you already have the stadium database generated, and
-(2) you have Internet access so that it can get at the
-box score data.
+To build, test, and generate a war file, execute:
+> gradle build
 
-Run the Groovy script service/populate_stadium_data.groovy
-to create and populate the stadium database. It uses H2
-and the Google Geocoder service to get the lat/lng data
-for individual stadiums.
+The build process generates a local, H2 database of
+stadium locations using the Google Geocoder service.
+It therefore needs Internet access to run successfully.
+
+The generated database is stored as a file in the build
+directory (which is also used for testing), and is then
+copied to the src/main/webapps directory for deployment.
+
+The clean task triggers a task that removes
+the generated database.
