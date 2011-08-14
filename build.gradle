@@ -27,6 +27,10 @@ task removeDb(type:Delete) {
 
 clean.dependsOn removeDb
 
+task wrapper(type:Wrapper) {
+    gradleVersion = '1.0-milestone-3'
+}
+
 dependencies {
     groovy 'org.codehaus.groovy:groovy-all:1.8.1'
 

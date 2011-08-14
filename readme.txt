@@ -10,8 +10,13 @@ An earlier version is running online at
 http://www.kousenit.com/groovybaseball ,
 assuming my laptop in my office is still up. :)
 
-To build, test, and generate a war file, execute:
+If gradle is installed on your machine, execute:
 > gradle build
+
+If not, run:
+> gradlew build
+to download gradle, then build, test, and generate
+a deployable war file.
 
 The build process generates a local, H2 database of
 stadium locations using the Google Geocoder service.
