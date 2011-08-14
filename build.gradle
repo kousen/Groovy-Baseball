@@ -22,7 +22,7 @@ task deployDb(dependsOn:generateTestDb, type:Copy) {
 war.dependsOn deployDb
 
 task removeDb(type:Delete) {
-    delete 'build/baseball.h2.db','src/main/webapp/build/baseball.h2.db'
+    delete 'src/main/webapp/build'
 }
 
 clean.dependsOn removeDb
