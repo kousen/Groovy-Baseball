@@ -148,6 +148,7 @@
                 		for (i in markersArray) {
                 			marker = markersArray.shift();
                 			marker.setMap(null);
+                			marker = null;
                 		}
                 	}
                 }
