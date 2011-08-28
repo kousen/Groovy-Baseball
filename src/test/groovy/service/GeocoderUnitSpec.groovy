@@ -1,6 +1,6 @@
 package service
 
-import groovy.mock.interceptor.MockFor
+import groovy.mock.interceptor.StubFor
 import spock.lang.Specification
 import beans.Stadium
 
@@ -17,20 +17,21 @@ class GeocoderUnitSpec extends Specification {
         city:'New York',state:'NY')
     Geocoder geocoder = new Geocoder()
     
-    def "check with mocked XmlSlurper"() {
+    def "check with stubbed XmlSlurper"() {
         given:
         def root = new XmlSlurper().parseText(xml)
-        def mock = new MockFor(XmlSlurper)
-        mock.demand.parse { root }
+        def stub = new StubFor(XmlSlurper)
+        stub.demand.parse { root }
 
         when:
-        mock.use {
+        stub.use {
             geocoder.fillInLatLng(stadium)
         }
 
         then:
         Math.abs(stadium.latitude - 37.422) < 0.01
-        Math.abs(stadium.longitude - -122.083) < 0.01        
+        Math.abs(stadium.longitude - -122.083) < 0.01
+        stub.verify()        
     }
     
 }
