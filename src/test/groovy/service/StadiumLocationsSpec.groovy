@@ -14,13 +14,13 @@ class StadiumLocationsSpec extends Specification {
             'org.h2.Driver')
     }
     
-    @Unroll({"$lat and $lng in range"})
+    @Unroll({"$name: $lat and $lng in range"})
     def "lat and lngs are reasonable"() {
         expect:
         lat > 25 && lat < 48
         lng > -123 && lng < -71
         
         where:
-        [lat,lng] << db.rows('select latitude,longitude from stadium')
+        [name,lat,lng] << db.rows('select name,latitude,longitude from stadium')
     }
 }
